@@ -1,6 +1,11 @@
 <?php 
 // menampilkan DB buku
-$ambilBuku = $conn->query("SELECT * FROM tb_buku ORDER BY id_buku DESC") or die(mysqli_error($conn));
+$ambilBuku = $conn->query("
+    SELECT tb_buku.*, tb_rak.nama_rak 
+    FROM tb_buku 
+    JOIN tb_rak ON tb_buku.lokasi = tb_rak.id_rak 
+    ORDER BY tb_buku.id_buku DESC
+") or die(mysqli_error($conn));
 
 ?>
 <h1 class="mt-4">Data Buku</h1>
@@ -27,6 +32,7 @@ $ambilBuku = $conn->query("SELECT * FROM tb_buku ORDER BY id_buku DESC") or die(
                         <th>Penerbit</th>
                         <th>ISBN</th>
                         <th>Jumlah Buku</th>
+                        <th>Rak Buku</th>
                         <th>Aksi</th>
                     </tr>
                 </thead>
@@ -43,6 +49,7 @@ $ambilBuku = $conn->query("SELECT * FROM tb_buku ORDER BY id_buku DESC") or die(
                         <td><?= $pecahBuku['penerbit_buku']; ?></td>
                         <td><?= $pecahBuku['isbn']; ?></td>
                         <td><?= $pecahBuku['jumlah_buku']; ?></td>
+                        <td><?= $pecahBuku['nama_rak']; ?></td>
                         <td>
                             <a href="?p=buku&aksi=ubah&id=<?= $pecahBuku['id_buku']; ?>" class="btn btn-info btn-sm"><i class="fa fa-edit"></i></a>
                             <a href="?p=buku&aksi=hapus&id=<?= $pecahBuku['id_buku']; ?>" class="btn btn-danger btn-sm"><i class="fa fa-trash" onclick="return confirm('Yakin ?')"></i></a>

@@ -10,6 +10,10 @@ if(!isset($_SESSION['login'])) {
 $page = @$_GET['p'];
 $aksi = @$_GET['aksi'];
 
+
+// Memeriksa apakah pengguna adalah admin
+$isAdmin = isset($_SESSION['role']) && $_SESSION['role'] === 'admin';
+
 // masih bug
 // di halaman tambah transaksi
 // di halaman transaksi/perpanjang.php
@@ -34,6 +38,15 @@ $aksi = @$_GET['aksi'];
                     echo "Ubah Buku";
                 } else {
                     echo "Halaman Buku";
+                }
+                
+            } if($page == 'rak') {
+                if($aksi == 'tambah') {
+                    echo "Tambah Rak";
+                } else if($aksi == 'ubah') {
+                    echo "Ubah Rak";
+                } else {
+                    echo "Halaman Rak";
                 }
                 
             } else if($page == 'anggota') {
@@ -110,25 +123,33 @@ $aksi = @$_GET['aksi'];
                                 <div class="sb-nav-link-icon"><i class="fa fa-users" aria-hidden="true"></i></div>
                                 Data Anggota
                             </a>
+                            <?php if ($isAdmin): ?> 
                             <a class="nav-link" href="?p=buku">
                                 <div class="sb-nav-link-icon"><i class="fa fa-book" aria-hidden="true"></i></div>
                                 Data Buku
                             </a>
+                            <a class="nav-link" href="?p=rak">
+                                <div class="sb-nav-link-icon"><i class="fa fa-book" aria-hidden="true"></i></div>
+                                Rak Buku
+                            </a>
+                            <?php endif; ?>
                             <a class="nav-link" href="?p=transaksi">
                                 <div class="sb-nav-link-icon"><i class="fa fa-handshake" aria-hidden="true"></i></div>
-                                Transaksi
+                                Pinjam Buku
                             </a>
                         </div>
                     </div>
                     <div class="sb-sidenav-footer">
                         <div class="small">Logged in as:</div>
-                        Start Bootstrap
+                       ARI DEVELOPER
                     </div>
                 </nav>
             </div>
             <div id="layoutSidenav_content">
                 <main>
-                    <marquee behavior="scroll" class="btn btn-dark">Selamat Datang <b><?= $_SESSION['login']['nama']; ?></b> Aplikasi Perpustakaan Sederhana</marquee>
+                <marquee behavior="scroll" class="btn btn-dark">
+                    Selamat Datang <b><?= $_SESSION['username']; ?></b> di Aplikasi Perpustakaan Sederhana
+                </marquee>
                     <div class="container-fluid">
                         <!-- <h1 class="mt-4">Static Navigation</h1> -->
                     <?php 
@@ -143,7 +164,18 @@ $aksi = @$_GET['aksi'];
                         } else if($aksi == 'hapus') {
                             require_once 'page/buku/hapus.php';
                         }
-                    } else if($page == 'anggota') {
+                    }     if($page == 'rak') {
+                        if($aksi == '') {
+                            require_once 'page/rak/rak.php';
+                        } else if($aksi == 'tambah') {
+                            require_once 'page/rak/tambah.php';
+                        } else if($aksi == 'ubah') {
+                            require_once 'page/rak/ubah.php';
+                        } else if($aksi == 'hapus') {
+                            require_once 'page/rak/hapus.php';
+                        }
+                    } 
+                    else if($page == 'anggota') {
                         if($aksi == '') {
                             require_once 'page/anggota/anggota.php';
                         } else if($aksi == 'tambah') {
@@ -178,7 +210,7 @@ $aksi = @$_GET['aksi'];
                 <footer class="py-4 bg-light mt-auto">
                     <div class="container-fluid">
                         <div class="d-flex align-items-center justify-content-between small">
-                            <div class="text-muted">Copyright &copy; Your Website 2020</div>
+                            <div class="text-muted">Copyright &copy; ARI DEV</div>
                             <div>
                                 <a href="#">Privacy Policy</a>
                                 &middot;

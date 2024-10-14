@@ -30,7 +30,8 @@ if(isset($_POST['ubah'])) {
 		echo "<script>alert('Data Gagal Diubah.');window.location='?p=buku';</script>";
 	}
 }
-
+$query = "SELECT id_rak, nama_rak FROM tb_rak";
+$result = $conn->query($query);
 ?>
 
 <h1 class="mt-4">Ubah Data Buku</h1>
@@ -78,12 +79,19 @@ if(isset($_POST['ubah'])) {
     </div>
     <div class="form-group">
     	<label for="lokasi">Lokasi</label>
-    	<select name="lokasi" id="lokasi" class="form-control">
-    		<option value="">-- Pilih Rak --</option>
-    		<option value="Rak 1" <?php if($pecahSql['lokasi'] == 'Rak 1'){echo "selected";} ?> >Rak 1</option>
-    		<option value="Rak 2" <?php if($pecahSql['lokasi'] == 'Rak 2'){echo "selected";} ?> >Rak 2</option>
-    		<option value="Rak 3" <?php if($pecahSql['lokasi'] == 'Rak 3'){echo "selected";} ?> >Rak 3</option>
-    	</select>
+        <select name="lokasi" id="lokasi" class="form-control">
+    <option value="">-- Pilih Rak --</option>
+    <?php
+    // Looping hasil query untuk mengisi dropdown
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo '<option value="' . $row['id_rak'] . '">' . $row['nama_rak'] . '</option>';
+        }
+    } else {
+        echo '<option value="">Data rak tidak tersedia</option>';
+    }
+    ?>
+</select>
     </div>
     <div class="form-group">
     	<label for="tgl_input">Tanggal Input</label>

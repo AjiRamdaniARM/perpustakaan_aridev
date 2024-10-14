@@ -7,22 +7,36 @@ if(isset($_SESSION['login'])) {
     exit;
 }
 
-if(isset($_POST['login'])) {
-    $username = $_POST['username'];
+if (isset($_POST['login'])) {
+    $username = htmlspecialchars($_POST['username']);
     $password = $_POST['password'];
 
+    // Ambil data user berdasarkan username
     $result = $conn->query("SELECT * FROM tb_user WHERE username = '$username'") or die(mysqli_error($conn));
-    if($result->num_rows === 1) {
+    
+    // Periksa apakah ada user dengan username tersebut
+    if ($result->num_rows === 1) {
         $row = $result->fetch_assoc();
-        if(password_verify($password, $row['password'])) {
-            // pasang session
-            $_SESSION['login'] = $row;
 
+        // Verifikasi password
+        if (password_verify($password, $row['password'])) {
+            // Pasang session
+            $_SESSION['login'] = true; // Set session login sebagai true
+            $_SESSION['user_id'] = $row['id']; // Simpan ID pengguna di session
+            $_SESSION['username'] = $row['username']; // Simpan username di session
+            $_SESSION['role'] = $row['role']; // Simpan role di session
+
+            // Redirect ke halaman index
             header("Location: index.php");
             exit;
+        } else {
+            echo "<script>alert('Password salah.');</script>";
         }
+    } else {
+        echo "<script>alert('Username tidak ditemukan.');</script>";
     }
 }
+
 
 
 
@@ -70,7 +84,7 @@ if(isset($_POST['login'])) {
                                 </form>
                             </div>
                             <div class="card-footer text-center">
-                                <div class="small"><a href="register.html">Need an account? Sign up!</a></div>
+                                <div class="small"><a href="register.php">Need an account? Sign up!</a></div>
                             </div>
                         </div>
                     </div>

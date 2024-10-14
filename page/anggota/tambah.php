@@ -31,15 +31,15 @@ if(isset($_POST['tambah'])) {
 	<form action="" method="post">
     <div class="form-group">
         <label class="small mb-1" for="nim">NIM</label>
-        <input class="form-control" id="nim" name="nim" type="number" placeholder="Masukan judul buku"/>
+        <input class="form-control" id="nim" name="nim" type="number" placeholder="Masukan NIM Anggota"/>
     </div>
     <div class="form-group">
         <label class="small mb-1" for="nama_anggota">Nama</label>
-        <input class="form-control" id="nama_anggota" name="nama_anggota" type="text" placeholder="Masukan pengarang buku"/>
+        <input class="form-control" id="nama_anggota" name="nama_anggota" type="text" placeholder="Masukan nama angggota"/>
     </div>
     <div class="form-group">
         <label class="small mb-1" for="tempat_lahir">Tempat Lahir</label>
-        <input class="form-control" id="tempat_lahir" name="tempat_lahir" type="text" placeholder="Masukan penerbit buku"/>
+        <input class="form-control" id="tempat_lahir" name="tempat_lahir" type="text" placeholder="Masukan Tempat Lahir"/>
     </div>
     <div class="form-group">
         <label class="small mb-1" for="tgl_lahir">Tanggal Lahir</label>

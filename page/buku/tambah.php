@@ -1,26 +1,38 @@
 <?php 
-if(isset($_POST['tambah'])) {
-	$judul = htmlspecialchars($_POST['judul_buku']);
-	$pengarang = htmlspecialchars($_POST['pengarang_buku']);
-	$penerbit = htmlspecialchars($_POST['penerbit_buku']);
-	$tahun_terbit = htmlspecialchars($_POST['tahun_terbit']);
-	$isbn = htmlspecialchars($_POST['isbn']);
-	$jumlah = htmlspecialchars($_POST['jumlah_buku']);
-	$lokasi = htmlspecialchars($_POST['lokasi']);
-	$tgl_input = htmlspecialchars($_POST['tgl_input']);
+$query = "SELECT id_rak, nama_rak FROM tb_rak";
+$result = $conn->query($query);
 
-    if(empty($judul && $pengarang && $penerbit && $tahun_terbit && $isbn && $jumlah && $lokasi && $tgl_input)) {
+if (isset($_POST['tambah'])) {
+    $judul = htmlspecialchars($_POST['judul_buku']);
+    $pengarang = htmlspecialchars($_POST['pengarang_buku']);
+    $penerbit = htmlspecialchars($_POST['penerbit_buku']);
+    $tahun_terbit = htmlspecialchars($_POST['tahun_terbit']);
+    $isbn = htmlspecialchars($_POST['isbn']);
+    $jumlah = htmlspecialchars($_POST['jumlah_buku']);
+    $lokasi = htmlspecialchars($_POST['lokasi']); // ID rak yang dipilih
+    $tgl_input = htmlspecialchars($_POST['tgl_input']);
+
+    // Validasi input kosong
+    if (empty($judul) || empty($pengarang) || empty($penerbit) || empty($tahun_terbit) || empty($isbn) || empty ($jumlah) || empty($lokasi) || empty($tgl_input)) {
         echo "<script>alert('Pastikan anda sudah mengisi semua formulir.');window.location='?p=buku';</script>";
+    } else {
+        // 1. Simpan buku baru ke tabel buku
+        $sql_buku = "INSERT INTO tb_buku (judul_buku, pengarang_buku, penerbit_buku, tahun_terbit, isbn, jumlah_buku, lokasi, tgl_input) 
+                    VALUES ('$judul', '$pengarang', '$penerbit', '$tahun_terbit', '$isbn','$jumlah' ,'$lokasi', '$tgl_input')";
+        if ($conn->query($sql_buku) === TRUE) {
+
+            // 2. Update jumlah buku di tabel rak
+            $sql_update_rak = "UPDATE tb_rak SET jumlah_buku = jumlah_buku + 1 WHERE id_rak = '$lokasi'";
+            if ($conn->query($sql_update_rak) === TRUE) {
+                echo "<script>alert('Buku berhasil ditambahkan dan jumlah buku di rak diperbarui!');window.location='?p=buku';</script>";
+            } else {
+                echo "Error updating record: " . $conn->error;
+            }
+        } else {
+            echo "Error: " . $sql_buku . "<br>" . $conn->error;
+        }
     }
-
-	$sql = $conn->query("INSERT INTO tb_buku VALUES (null, '$judul', '$pengarang', '$penerbit', '$tahun_terbit', '$isbn', '$jumlah', '$lokasi', '$tgl_input')") or die(mysqli_error($conn));
-	if($sql) {
-		echo "<script>alert('Data Berhasil Ditambahkan.');window.location='?p=buku';</script>";
-	} else {
-		echo "<script>alert('Data Gagal Ditambahkan.')</script>";
-	}
 }
-
 ?>
 
 <h1 class="mt-4">Tambah Data Buku</h1>
@@ -62,18 +74,26 @@ if(isset($_POST['tambah'])) {
         <label class="small mb-1" for="isbn">ISBN</label>
         <input class="form-control" id="isbn" name="isbn" type="text" placeholder="Masukan isbn buku"/>
     </div>
-    <div class="form-group">
+   <div class="form-group">
         <label class="small mb-1" for="jumlah_buku">Jumlah Buku</label>
         <input class="form-control" id="jumlah_buku" name="jumlah_buku" type="number" placeholder="Masukan jumlah buku"/>
     </div>
     <div class="form-group">
     	<label for="lokasi">Lokasi</label>
     	<select name="lokasi" id="lokasi" class="form-control">
-    		<option value="">-- Pilih Rak --</option>
-    		<option value="Rak 1">Rak 1</option>
-    		<option value="Rak 3">Rak 2</option>
-    		<option value="Rak 3">Rak 3</option>
-    	</select>
+    <option value="">-- Pilih Rak --</option>
+    <?php
+    // Looping hasil query untuk mengisi dropdown
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo '<option value="' . $row['id_rak'] . '">' . $row['nama_rak'] . '</option>';
+        }
+    } else {
+        echo '<option value="">Data rak tidak tersedia</option>';
+    }
+    ?>
+</select>
+
     </div>
     <div class="form-group">
     	<label for="tgl_input">Tanggal Input</label>
